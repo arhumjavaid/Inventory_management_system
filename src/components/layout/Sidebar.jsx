@@ -18,11 +18,11 @@ import { supabase } from '../../lib/supabase';
 // All menu items (Users will be filtered based on role)
 const allMenuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', roles: ['admin', 'manager', 'staff'] },
-  { icon: Package, label: 'Products', path: '/products', roles: ['admin', 'manager', 'staff'] },
+  { icon: Package, label: 'Products', path: '/products', roles: ['admin', 'manager'] }, // Staff cannot see Products
   { icon: ShoppingCart, label: 'Sales', path: '/sales', roles: ['admin', 'manager', 'staff'] },
   { icon: TrendingUp, label: 'Purchases', path: '/purchases', roles: ['admin', 'manager', 'staff'] },
-  { icon: FileText, label: 'Reports', path: '/reports', roles: ['admin', 'manager', 'staff'] },
-  { icon: Users, label: 'Users', path: '/users', roles: ['admin'] }, // Only admins can see this
+  { icon: FileText, label: 'Reports', path: '/reports', roles: ['admin'] }, // Only admins can see Reports
+  { icon: Users, label: 'Users', path: '/users', roles: ['admin'] }, // Only admins can see Users
   { icon: Settings, label: 'Settings', path: '/settings', roles: ['admin', 'manager', 'staff'] },
 ];
 
