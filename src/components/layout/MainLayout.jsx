@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
+import Chatbot from '../ui/Chatbot';
 
 export default function MainLayout() {
   return (
@@ -18,6 +19,9 @@ export default function MainLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Chatbot - Available on all pages */}
+      <Chatbot />
     </div>
   );
 }
