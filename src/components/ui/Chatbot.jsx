@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { sendMessageToN8N, initializeChatSession } from '../../lib/n8n';
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,42 +82,38 @@ export default function Chatbot() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate bot response (replace this with n8n API call later)
-    setTimeout(() => {
+    try {
+      // Send message to n8n webhook
+      const botResponse = await sendMessageToN8N(currentMessage, {
+        sessionId: Date.now(), // Simple session tracking
+        timestamp: new Date().toISOString(),
+      });
+
       const botMessage = {
         id: Date.now() + 1,
-        text: "✨ I'm currently in demo mode! Soon I'll be powered by n8n to provide:\n\n🔹 Real-time inventory insights\n🔹 Sales analytics\n🔹 Product recommendations\n🔹 Smart alerts & notifications\n\nStay tuned! 🚀",
+        text: botResponse.text,
+        sender: 'bot',
+        timestamp: botResponse.timestamp,
+      };
+      
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error sending message to n8n:', error);
+      
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: "Sorry, I'm having trouble connecting to the assistant right now. Please make sure:\n\n🔹 Your n8n workflow is running\n🔹 The webhook URL is correctly set in your .env file\n🔹 CORS is configured in n8n\n\nTry again in a moment!",
         sender: 'bot',
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
-
-    // TODO: Replace above with actual n8n API call
-    // Example:
-    // try {
-    //   const response = await fetch('YOUR_N8N_WEBHOOK_URL', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ message: inputMessage }),
-    //   });
-    //   const data = await response.json();
-    //   const botMessage = {
-    //     id: Date.now() + 1,
-    //     text: data.response,
-    //     sender: 'bot',
-    //     timestamp: new Date(),
-    //   };
-    //   setMessages((prev) => [...prev, botMessage]);
-    // } catch (error) {
-    //   console.error('Error sending message:', error);
-    // } finally {
-    //   setIsTyping(false);
-    // }
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
